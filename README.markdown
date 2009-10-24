@@ -111,3 +111,5 @@ which'll be fixed soon:
 Original idea and development
 by Dmitry A. Ustalov (aka [eveel](http://www.eveel.ru/))
 of [Peppery](http://www.peppery.me/).
+
+Strawberry is released under MIT License.
