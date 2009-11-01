@@ -11,6 +11,7 @@ begin
     gem.description = 'Domain Specific Solution to store Table data into Tree hierarchy with Metadata.'
     gem.email = 'eveel@peppery.me'
     gem.homepage = 'http://github.com/peppery/strawberry'
+    gem.rubyforge_project = 'strawberry'
     gem.authors = [ 'Dmitry A. Ustalov of Peppery' ]
     gem.add_dependency 'rufus-tokyo', '>= 1.0.1'
   end

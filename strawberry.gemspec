@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/strawberry/base.rb",
      "lib/strawberry/dao.rb",
      "lib/strawberry/node.rb",
+     "strawberry.gemspec",
      "test/.gitignore",
      "test/base_test.rb",
      "test/dao_test.rb",
@@ -38,6 +39,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/peppery/strawberry}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
+  s.rubyforge_project = %q{strawberry}
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Tree-Oriented Table Data Storage.}
   s.test_files = [
