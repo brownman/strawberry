@@ -3,6 +3,7 @@
 module Strawberry
   module DAO
     require 'csv'
+    require 'array_extensions'
 
     VALID_NAME_PATTERN = /^[A-z_\-0-9\.]+$/
 
@@ -110,18 +111,18 @@ module Strawberry
       raise NotFound.new(name) unless table_exist? name
 
       new_data = array_wrap(new_data)
-      size = new_data.inject(0) do |r, l|
-        r > l.size ? r : l.size
-      end
+      #size = new_data.inject(0) do |r, l|
+      #  r > l.size ? r : l.size
+      #end
 
-      dump = ''
-      if size > 0
-        new_data.each do |row|
-          CSV.generate_row row, size, dump
-        end
-      end
+      #dump = ''
+      #if size > 0
+      #  new_data.each do |row|
+      #    CSV.generate_row row, size, dump
+      #  end
+      #end
 
-      (data[name] = dump).freeze
+      (data[name] = new_data.to_csv).freeze
     end
 
     def get_meta(name)

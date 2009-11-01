@@ -63,7 +63,10 @@ module Strawberry::Test
         table = subject.add_table Strawberry::Test.uuid
 
         subject.set_data table, []
-        assert_equal [ [] ], subject.get_data(table)
+        assert_equal [ [ '' ] ], subject.get_data(table)
+
+        subject.set_data table, [ [] ]
+        assert_equal [ [ '' ] ], subject.get_data(table)
 
         subject.set_data table, 'delicious flat chest'
         assert_equal [ [ 'delicious flat chest' ] ],
@@ -76,6 +79,16 @@ module Strawberry::Test
         subject.set_data table, [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
         assert_equal [ [ '1', '2', '3' ], [ '4', '5', '6' ] ],
           subject.get_data(table)
+      end
+
+      should 'correctly store some 2D data' do
+        table = subject.add_table Strawberry::Test.uuid
+
+        ints = Array(1..100).map { |a| Array(a..(a + 100)) }
+        strs = ints.map { |a| a.map { |i| i.to_s } }
+
+        subject.set_data table, ints
+        assert_equal strs, subject.get_data(table)
       end
 
       should 'froze data' do
