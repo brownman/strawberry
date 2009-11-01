@@ -16,7 +16,7 @@ begin
     gem.add_dependency 'rufus-tokyo', '>= 1.0.1'
   end
   Jeweler::RubyforgeTasks.new
-rescue
+rescue LoadError
   puts 'Jeweler (or a dependency) not available.'
   puts 'Install it with: sudo gem install jeweler'
 end
