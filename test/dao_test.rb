@@ -39,15 +39,16 @@ module Strawberry::Test
 
       should 'have no data and metadata on new table' do
         table = subject.add_table Strawberry::Test.uuid
-        assert_equal Array.new, subject.get_data(table)
+        assert_equal [ [] ], subject.get_data(table)
         assert_equal Hash.new, subject.get_meta(table)
       end
 
       should 'set table data' do
         table = subject.add_table Strawberry::Test.uuid
-        data = [ [ 1, 2, 3 ] ]
-        assert_nothing_raised { subject.set_data table, data }
-        assert_equal data, subject.get_data(table)
+        assert_nothing_raised do
+          subject.set_data table, [ [ 1, 2, 3 ] ]
+        end
+        assert_equal [ [ '1', '2', '3' ] ], subject.get_data(table)
       end
 
       should 'not set table data on not-existant table' do
@@ -58,11 +59,23 @@ module Strawberry::Test
         end
       end
 
-      should 'validate data format' do
+      should 'tablize data' do
         table = subject.add_table Strawberry::Test.uuid
-        assert_raise TypeError do
-          subject.set_data table, 'delicious flat chest'
-        end
+
+        subject.set_data table, []
+        assert_equal [ [] ], subject.get_data(table)
+
+        subject.set_data table, 'delicious flat chest'
+        assert_equal [ [ 'delicious flat chest' ] ],
+          subject.get_data(table)
+
+        subject.set_data table, [ 1, 2, 3 ]
+        assert_equal [ [ '1' ], [ '2' ], [ '3' ] ],
+          subject.get_data(table)
+
+        subject.set_data table, [ [ 1, 2, 3 ], [ 4, 5, 6 ] ]
+        assert_equal [ [ '1', '2', '3' ], [ '4', '5', '6' ] ],
+          subject.get_data(table)
       end
 
       should 'froze data' do

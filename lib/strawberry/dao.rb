@@ -2,6 +2,8 @@
 
 module Strawberry
   module DAO
+    require 'csv'
+
     VALID_NAME_PATTERN = /^[A-z_\-0-9\.]+$/
 
     def valid_name?(name)
@@ -99,16 +101,27 @@ module Strawberry
     def get_data(name)
       raise NotFound.new(name) unless table_exist? name
 
-      (Marshal.load data[name]).freeze
+      array_wrap(CSV.parse(data[name])).freeze
     rescue TypeError
-      []
+      [ [] ]
     end
 
     def set_data(name, new_data)
       raise NotFound.new(name) unless table_exist? name
-      raise TypeError unless new_data.instance_of? Array
 
-      (data[name] = Marshal.dump new_data).freeze
+      new_data = array_wrap(new_data)
+      size = new_data.inject(0) do |r, l|
+        r > l.size ? r : l.size
+      end
+
+      dump = ''
+      if size > 0
+        new_data.each do |row|
+          CSV.generate_row row, size, dump
+        end
+      end
+
+      (data[name] = dump).freeze
     end
 
     def get_meta(name)
@@ -152,5 +165,12 @@ module Strawberry
 
       name
     end
+
+    def array_wrap obj
+      obj = Array(obj)
+      obj << [] if obj.empty?
+      obj.map { |l| Array(l).map { |c| c.to_s } }
+    end
+    private :array_wrap
   end
 end

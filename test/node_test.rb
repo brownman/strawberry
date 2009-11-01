@@ -72,9 +72,8 @@ module Strawberry::Test
       end
 
       should 'have data' do
-        data = [ [ 1, 2, 3 ] ]
-        assert_nothing_raised { subject.data = data }
-        assert_equal data, subject.data
+        assert_nothing_raised { subject.data = [ [ 1, 2, 3 ] ] }
+        assert_equal [ [ '1', '2', '3' ] ], subject.data
       end
 
       should 'have metadata' do
