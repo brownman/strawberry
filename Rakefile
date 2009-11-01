@@ -13,19 +13,21 @@ begin
     gem.homepage = 'http://github.com/peppery/strawberry'
     gem.rubyforge_project = 'strawberry'
     gem.authors = [ 'Dmitry A. Ustalov of Peppery' ]
-    gem.add_dependency 'rufus-tokyo', '>= 1.0.1'
+    gem.add_development_dependency "shoulda", ">= 0"
+    gem.add_dependency 'rufus-tokyo', '>= 1.0.2'
   end
   Jeweler::RubyforgeTasks.new
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts 'Jeweler (or a dependency) not available.'
   puts 'Install it with: sudo gem install jeweler'
 end
 
-desc 'Default: run unit tests.'
+task :test => :check_dependencies
+
 task :default => :test
 
 require 'rake/testtask'
-desc 'Test Strawberry.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'
@@ -33,7 +35,6 @@ Rake::TestTask.new(:test) do |t|
 end
 
 require 'rake/rdoctask'
-desc 'Generate documentation for Strawberry.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'Strawberry Documentation'
