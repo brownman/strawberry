@@ -9,6 +9,13 @@ module Strawberry::Test
         instance = Strawberry::DAO.at Strawberry::Test::DATABASE_PATH
         assert_kind_of Strawberry::DAO, instance
       end
+
+      should 'not have working factory at non-existant directory' do
+        assert_raise Errno::ENOENT do
+          Strawberry::DAO.at Strawberry::Test::DATABASE_PATH +
+            Strawberry::Test.uuid
+        end
+      end
     end
 
     context 'Strawberry DAO' do
@@ -63,10 +70,10 @@ module Strawberry::Test
         table = subject.add_table Strawberry::Test.uuid
 
         subject.set_data table, []
-        assert_equal [ [ '' ] ], subject.get_data(table)
+        assert_equal [ [] ], subject.get_data(table)
 
         subject.set_data table, [ [] ]
-        assert_equal [ [ '' ] ], subject.get_data(table)
+        assert_equal [ [] ], subject.get_data(table)
 
         subject.set_data table, 'delicious flat chest'
         assert_equal [ [ 'delicious flat chest' ] ],
@@ -81,10 +88,10 @@ module Strawberry::Test
           subject.get_data(table)
       end
 
-      should 'correctly store some 2D data' do
+      should 'correctly store some non-flat 2D data' do
         table = subject.add_table Strawberry::Test.uuid
 
-        ints = Array(1..100).map { |a| Array(a..(a + 100)) }
+        ints = (1..100).map { |a| Array(1..a) }
         strs = ints.map { |a| a.map { |i| i.to_s } }
 
         subject.set_data table, ints

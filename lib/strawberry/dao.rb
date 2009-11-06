@@ -2,9 +2,6 @@
 
 module Strawberry
   module DAO
-    require 'csv'
-    require 'array_extensions'
-
     VALID_NAME_PATTERN = /^[A-z_\-0-9\.]+$/
 
     def valid_name?(name)
@@ -65,16 +62,6 @@ module Strawberry
 
               meta_path = File.join @path, 'metabase.tct'
               @meta = Rufus::Tokyo::Table.new(meta_path, :mode => 'wcefs')
-
-              # sure?
-              ObjectSpace.define_finalizer self, proc { self.close! }
-            end
-
-            define_method :close do
-              meta.close
-              data.close
-              index.close
-              nil
             end
           end.new
         end
@@ -102,7 +89,7 @@ module Strawberry
     def get_data(name)
       raise NotFound.new(name) unless table_exist? name
 
-      array_wrap(CSV.parse(data[name])).freeze
+      array_wrap(Marshal.load(data[name])).freeze
     rescue TypeError
       [ [] ]
     end
@@ -111,18 +98,8 @@ module Strawberry
       raise NotFound.new(name) unless table_exist? name
 
       new_data = array_wrap(new_data)
-      #size = new_data.inject(0) do |r, l|
-      #  r > l.size ? r : l.size
-      #end
 
-      #dump = ''
-      #if size > 0
-      #  new_data.each do |row|
-      #    CSV.generate_row row, size, dump
-      #  end
-      #end
-
-      (data[name] = new_data.to_csv).freeze
+      (data[name] = Marshal.dump(new_data)).freeze
     end
 
     def get_meta(name)
