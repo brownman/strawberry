@@ -13,10 +13,6 @@ module Strawberry
       def at path
         @buildings ||= {}
 
-        unless File.directory? path
-          raise Errno::ENOENT, path
-        end
-
         unless @buildings.has_key? path
           base = self
 

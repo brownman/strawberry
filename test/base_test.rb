@@ -9,6 +9,13 @@ module Strawberry::Test
         instance = Strawberry::Base.at Strawberry::Test::DATABASE_PATH
         assert_kind_of Strawberry::Base, instance
       end
+
+      should 'not have working factory at non-existant directory' do
+        assert_raise Errno::ENOENT do
+          Strawberry::Base.at Strawberry::Test::DATABASE_PATH +
+            Strawberry::Test.uuid
+        end
+      end
     end
 
     context 'Strawberry Base Node' do
