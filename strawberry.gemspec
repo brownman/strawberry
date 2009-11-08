@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{strawberry}
-  s.version = "0.1.2"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov of Peppery"]
-  s.date = %q{2009-11-01}
+  s.date = %q{2009-11-09}
   s.description = %q{Domain Specific Solution to store Table data into Tree hierarchy with Metadata.}
   s.email = %q{eveel@peppery.me}
   s.extra_rdoc_files = [
@@ -25,11 +25,11 @@ Gem::Specification.new do |s|
      "VERSION",
      "example/.gitignore",
      "example/schedules.rb",
-     "lib/array_extensions.rb",
      "lib/strawberry.rb",
      "lib/strawberry/base.rb",
      "lib/strawberry/dao.rb",
      "lib/strawberry/node.rb",
+     "lib/strawberry/tokyo.rb",
      "strawberry.gemspec",
      "test/.gitignore",
      "test/base_test.rb",
