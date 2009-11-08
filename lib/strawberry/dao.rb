@@ -55,13 +55,13 @@ module Strawberry
               @path = path
 
               index_path = File.join @path, 'index.tct'
-              @index = Rufus::Tokyo::Table.new(index_path, :mode => 'wcefs')
+              @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
 
               data_path = File.join @path, 'database.tch'
-              @data = Rufus::Tokyo::Cabinet.new(data_path, :mode => 'wcef')
+              @data = Tokyo::Cabinet.new(data_path, :mode => 'wcef')
 
               meta_path = File.join @path, 'metabase.tct'
-              @meta = Rufus::Tokyo::Table.new(meta_path, :mode => 'wcefs')
+              @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
             end
           end.new
         end
