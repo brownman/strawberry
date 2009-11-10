@@ -25,9 +25,30 @@ module Strawberry::Test
 
       subject { @base ||= Strawberry::Base.at @path }
 
-      should 'be root' do
+      should 'have not name' do
         assert_nil subject.name
+      end
+
+      should 'have not parent' do
         assert_nil subject.parent
+      end
+
+      should 'have not data' do
+        assert_raise Strawberry::DAO::InvalidName do
+          subject.data = [ [ 1 ] ]
+        end
+        assert_raise Strawberry::DAO::InvalidName do
+          subject.data
+        end
+      end
+
+      should 'have not metadata' do
+        assert_raise Strawberry::DAO::InvalidName do
+          subject.meta = { :asd => 100500 }
+        end
+        assert_raise Strawberry::DAO::InvalidName do
+          subject.meta
+        end
       end
     end
   end
