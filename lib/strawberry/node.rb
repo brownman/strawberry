@@ -83,5 +83,9 @@ module Strawberry
       end.freeze
       self
     end
+
+    def removed?
+      !dao.table_exist? self.name
+    end
   end
 end
