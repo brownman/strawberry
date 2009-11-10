@@ -106,6 +106,13 @@ module Strawberry::Test
           child.meta
         end
       end
+
+      should 'be removed' do
+        child = subject >> Strawberry::Test.uuid
+        assert !child.removed?
+        subject.clean!
+        assert child.removed?
+      end
     end
   end
 end
