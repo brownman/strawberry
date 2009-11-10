@@ -87,6 +87,7 @@ module Strawberry
     end
 
     def get_data(name)
+      raise InvalidName.new(name) unless valid_name?(name)
       raise NotFound.new(name) unless table_exist? name
 
       array_wrap(Marshal.load(data[name])).freeze
@@ -95,6 +96,7 @@ module Strawberry
     end
 
     def set_data(name, new_data)
+      raise InvalidName.new(name) unless valid_name?(name)
       raise NotFound.new(name) unless table_exist? name
 
       new_data = array_wrap(new_data)
@@ -103,12 +105,14 @@ module Strawberry
     end
 
     def get_meta(name)
+      raise InvalidName.new(name) unless valid_name?(name)
       raise NotFound.new(name) unless table_exist? name
 
       (meta[name] || {}).freeze
     end
 
     def set_meta(name, new_meta)
+      raise InvalidName.new(name) unless valid_name?(name)
       raise NotFound.new(name) unless table_exist? name
       raise TypeError unless new_meta.instance_of? Hash
 
@@ -131,6 +135,7 @@ module Strawberry
     end
 
     def remove_table name
+      raise InvalidName.new(name) unless valid_name?(name)
       raise NotFound.new(name) unless table_exist? name
 
       get_childs(name).each do |c|
