@@ -2,10 +2,6 @@
 
 # conversions are took from O'Reilly's Ruby Cookbook
 class DateTime
-  def to_gm_time
-    to_time(new_offset, :gm)
-  end
-
   def to_local_time
     to_time(new_offset(DateTime.now.offset - offset), :local)
   end
