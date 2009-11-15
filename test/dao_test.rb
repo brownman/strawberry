@@ -13,7 +13,7 @@ module Strawberry::Test
       should 'not have working factory at non-existant directory' do
         assert_raise Errno::ENOENT do
           Strawberry::DAO.at Strawberry::Test::DATABASE_PATH +
-            Strawberry::Test.uuid
+            Strawberry.uuid
         end
       end
     end
@@ -40,18 +40,18 @@ module Strawberry::Test
       end
 
       should 'add new table' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         assert subject.table_exist?(table)
       end
 
       should 'have no data and metadata on new table' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         assert_equal [ [] ], subject.get_data(table)
         assert_equal Hash.new, subject.get_meta(table)
       end
 
       should 'set table data' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         assert_nothing_raised do
           subject.set_data table, [ [ 1, 2, 3 ] ]
         end
@@ -59,7 +59,7 @@ module Strawberry::Test
       end
 
       should 'not set table data on not-existant table' do
-        table = Strawberry::Test.uuid
+        table = Strawberry.uuid
         data = [ [ 1, 2, 3 ] ]
         assert_raise Strawberry::DAO::NotFound do
           subject.set_data table, data
@@ -67,7 +67,7 @@ module Strawberry::Test
       end
 
       should 'tablize data' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
 
         subject.set_data table, []
         assert_equal [ [] ], subject.get_data(table)
@@ -89,7 +89,7 @@ module Strawberry::Test
       end
 
       should 'correctly store some non-flat 2D data' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
 
         ints = (1..100).map { |a| Array(1..a) }
         strs = ints.map { |a| a.map { |i| i.to_s } }
@@ -99,7 +99,7 @@ module Strawberry::Test
       end
 
       should 'froze data' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         res = subject.set_data table, [ 'dfc sucks' ]
         assert res.frozen?
         res = subject.get_data table
@@ -107,14 +107,14 @@ module Strawberry::Test
       end
 
       should 'set table metadata' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         meta = { 'dfc' => 'flat bitch', 'buba' => 'suka debil' }
         assert_nothing_raised { subject.set_meta table, meta }
         assert_equal meta, subject.get_meta(table)
       end
 
       should 'not set table metadata on not-existant table' do
-        table = Strawberry::Test.uuid
+        table = Strawberry.uuid
         meta = { 'dfc' => 'flat bitch', 'buba' => 'suka debil' }
         assert_raise Strawberry::DAO::NotFound do
           subject.set_meta table, meta
@@ -122,14 +122,14 @@ module Strawberry::Test
       end
 
       should 'validate metadata format' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         assert_raise TypeError do
           subject.set_meta table, [ 'delicious', 'flat', 'chest' ]
         end
       end
 
       should 'froze metadata' do
-        table = subject.add_table Strawberry::Test.uuid
+        table = subject.add_table Strawberry.uuid
         res = subject.set_meta(table, { 'dfc' => 'sucks' })
         assert res.frozen?
         res = subject.get_meta table
@@ -137,49 +137,49 @@ module Strawberry::Test
       end
 
       should 'add table child' do
-        root = subject.add_table Strawberry::Test.uuid
-        child = subject.add_table Strawberry::Test.uuid, root
+        root = subject.add_table Strawberry.uuid
+        child = subject.add_table Strawberry.uuid, root
         assert subject.table_exist?(child)
       end
 
       should 'not add child to not-existant parent table' do
-        root = Strawberry::Test.uuid
+        root = Strawberry.uuid
         assert_raise Strawberry::DAO::NotFound do
-          child = subject.add_table Strawberry::Test.uuid, root
+          child = subject.add_table Strawberry.uuid, root
         end
       end
 
       should 'find parent of table' do
-        root = subject.add_table Strawberry::Test.uuid
-        child = subject.add_table Strawberry::Test.uuid, root
+        root = subject.add_table Strawberry.uuid
+        child = subject.add_table Strawberry.uuid, root
         assert_equal root, subject.get_parent(child)
       end
 
       should 'not find parent of not-existant table' do
-        root = subject.add_table Strawberry::Test.uuid
-        child = Strawberry::Test.uuid
+        root = subject.add_table Strawberry.uuid
+        child = Strawberry.uuid
         assert_raise Strawberry::DAO::NotFound do
           subject.get_parent child
         end
       end
 
       should 'find childs of table' do
-        root = subject.add_table Strawberry::Test.uuid
+        root = subject.add_table Strawberry.uuid
         childs = (1..3).map do
-          subject.add_table Strawberry::Test.uuid, root
+          subject.add_table Strawberry.uuid, root
         end
         assert_equal childs, subject.get_childs(root)
       end
 
       should 'not find childs of not-existant table' do
-        root = Strawberry::Test.uuid
+        root = Strawberry.uuid
         assert_raise Strawberry::DAO::NotFound do
           subject.get_childs root
         end
       end
 
       should 'validate uniqueness of table name' do
-        name = Strawberry::Test.uuid
+        name = Strawberry.uuid
         table = subject.add_table name
         assert_raise Strawberry::DAO::AlreadyExists do
           subject.add_table name
@@ -187,11 +187,11 @@ module Strawberry::Test
       end
 
       should 'remove table' do
-        root = subject.add_table Strawberry::Test.uuid
-        child1 = subject.add_table Strawberry::Test.uuid, root
-        child2 = subject.add_table Strawberry::Test.uuid, root
-        child1a = subject.add_table Strawberry::Test.uuid, child1
-        child1b = subject.add_table Strawberry::Test.uuid, child1
+        root = subject.add_table Strawberry.uuid
+        child1 = subject.add_table Strawberry.uuid, root
+        child2 = subject.add_table Strawberry.uuid, root
+        child1a = subject.add_table Strawberry.uuid, child1
+        child1b = subject.add_table Strawberry.uuid, child1
 
         assert_nothing_raised { subject.remove_table root }
 
@@ -206,7 +206,7 @@ module Strawberry::Test
       end
 
       should 'not remove not-existant table' do
-        table = Strawberry::Test.uuid
+        table = Strawberry.uuid
         assert_raise Strawberry::DAO::NotFound do
           subject.remove_table table
         end

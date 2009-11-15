@@ -14,7 +14,7 @@ module Strawberry::Test
       end
 
       should 'have working factory method' do
-        instance = Strawberry::Node.new(Strawberry::Test.uuid, @base, @dao)
+        instance = Strawberry::Node.new(Strawberry.uuid, @base, @dao)
         assert_kind_of Strawberry::Node, instance
       end
     end
@@ -25,7 +25,7 @@ module Strawberry::Test
         @base ||= Strawberry::Base.at @path
       end
 
-      subject { @node ||= @base >> Strawberry::Test.uuid }
+      subject { @node ||= @base >> Strawberry.uuid }
 
       should 'not be root' do
         assert_not_nil subject.name
@@ -33,34 +33,34 @@ module Strawberry::Test
       end
 
       should 'have childs' do
-        child1 = subject >> Strawberry::Test.uuid
-        child2 = child1 >> Strawberry::Test.uuid
+        child1 = subject >> Strawberry.uuid
+        child2 = child1 >> Strawberry.uuid
         assert_contains subject.childs, child1
         assert_contains child1.childs, child2
       end
 
       should 'walk by childs' do
-        child1 = subject >> Strawberry::Test.uuid
-        child2 = child1 >> Strawberry::Test.uuid
+        child1 = subject >> Strawberry.uuid
+        child2 = child1 >> Strawberry.uuid
         assert_same child1, subject.child(child1.name)
         assert_same child2, subject.child(child1.name).child(child2.name)
       end
 
       should 'create childs on demand' do
-        name = Strawberry::Test.uuid
+        name = Strawberry.uuid
         assert_nothing_raised { subject.child name }
       end
 
       should 'not duplicate childs on demand' do
-        name = Strawberry::Test.uuid
+        name = Strawberry.uuid
         test = subject >> name
         assert_same subject >> name, test
       end
 
       should 'acts as tree' do
-        node1 = subject >> Strawberry::Test.uuid
-        node2 = subject >> Strawberry::Test.uuid
-        common_name = Strawberry::Test.uuid
+        node1 = subject >> Strawberry.uuid
+        node2 = subject >> Strawberry.uuid
+        common_name = Strawberry.uuid
         assert node1.childs.size == 0
         assert node2.childs.size == 0
         assert_nothing_raised do
@@ -83,15 +83,15 @@ module Strawberry::Test
       end
 
       should 'clean' do
-        child1 = subject >> Strawberry::Test.uuid
-        child1 >> Strawberry::Test.uuid
-        child2 = subject >> Strawberry::Test.uuid
+        child1 = subject >> Strawberry.uuid
+        child1 >> Strawberry.uuid
+        child2 = subject >> Strawberry.uuid
         assert_nothing_raised { subject.clean! }
         assert subject.childs.empty?
       end
 
       should 'not have data or metadata on not-exitant tree node' do
-        child = subject >> Strawberry::Test.uuid
+        child = subject >> Strawberry.uuid
         subject.clean!
         assert_raise Strawberry::DAO::NotFound do
           child.data = [ 'fail' ]
@@ -108,7 +108,7 @@ module Strawberry::Test
       end
 
       should 'be removed' do
-        child = subject >> Strawberry::Test.uuid
+        child = subject >> Strawberry.uuid
         assert !child.removed?
         subject.clean!
         assert child.removed?

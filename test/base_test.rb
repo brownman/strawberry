@@ -13,7 +13,7 @@ module Strawberry::Test
       should 'not have working factory at non-existant directory' do
         assert_raise Errno::ENOENT do
           Strawberry::Base.at Strawberry::Test::DATABASE_PATH +
-            Strawberry::Test.uuid
+            Strawberry.uuid
         end
       end
     end
