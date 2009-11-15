@@ -2,52 +2,51 @@
 
 module Strawberry
   module Node
-    attr_reader :name, :base, :dao
+    attr_reader :id, :base, :dao
     private :base, :dao
 
     class << self
-      def new name, base, dao
+      def new id, base, dao
         @bases ||= {}
 
         @bases[base] ||= {}
 
-        unless @bases[base].has_key? name
+        unless @bases[base].has_key? id
           node = self
 
-          @bases[base][name] = Class.new do
+          @bases[base][id] = Class.new do
             include node
 
             define_method :initialize do
-              @name, @base, @dao = name, base, dao
+              @id, @base, @dao = id, base, dao
             end
           end.new
         end
 
-        @bases[base][name]
+        @bases[base][id]
       end
+    end
+
+    def name
+      return nil if base == self
+      dao.get_name(self.id)
     end
 
     def parent
       return nil if base == self
-      Strawberry::Node.new dao.get_parent(name), base, dao
+      Strawberry::Node.new dao.get_parent(self.id), base, dao
     end
 
     def childs
-      dao.get_childs(name).map do |child_name|
-        Strawberry::Node.new child_name, base, dao
+      dao.get_childs(self.id).map do |child_id|
+        Strawberry::Node.new child_id, base, dao
       end.freeze
     end
 
     def child child_name
-      child_name = child_name.split(/\./).last
-      node_name = if name
-        [ name, child_name ].join '.'
-      else
-        child_name
-      end
-      found = childs.find { |c| c.name == node_name }
+      found = childs.find { |c| c.name == child_name }
       unless found
-        add_child node_name
+        add_child child_name
       else
         found
       end
@@ -55,37 +54,36 @@ module Strawberry
     alias :>> :child
 
     def add_child child_name
-      dao.add_table child_name, name
-      node = Strawberry::Node.new child_name, base, dao
-      node
+      child_id = dao.add_table child_name, self.id
+      Strawberry::Node.new child_id, base, dao
     end
     private :add_child
 
     def data
-      dao.get_data(self.name)
+      dao.get_data(self.id)
     end
 
     def data=(val)
-      dao.set_data(self.name, val)
+      dao.set_data(self.id, val)
     end
 
     def meta
-      dao.get_meta self.name
+      dao.get_meta self.id
     end
 
     def meta=(val)
-      dao.set_meta(self.name, val)
+      dao.set_meta(self.id, val)
     end
 
     def clean!
-      dao.get_childs(name).each do |child_name|
-        dao.remove_table child_name
+      dao.get_childs(self.id).each do |child_id|
+        dao.remove_table child_id
       end.freeze
       self
     end
 
     def removed?
-      !dao.table_exist? self.name
+      !dao.have_table? self.id
     end
   end
 end
