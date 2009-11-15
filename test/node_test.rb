@@ -28,6 +28,8 @@ module Strawberry::Test
       subject { @node ||= @base >> Strawberry.uuid }
 
       should 'not be root' do
+        assert !subject.root?
+        assert_not_nil subject.id
         assert_not_nil subject.name
         assert_not_nil subject.parent
       end

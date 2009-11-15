@@ -27,13 +27,17 @@ module Strawberry
       end
     end
 
+    def root?
+      base == self
+    end
+
     def name
-      return nil if base == self
+      return nil if root?
       dao.get_name(self.id)
     end
 
     def parent
-      return nil if base == self
+      return nil if root?
       Strawberry::Node.new dao.get_parent(self.id), base, dao
     end
 

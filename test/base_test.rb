@@ -25,6 +25,14 @@ module Strawberry::Test
 
       subject { @base ||= Strawberry::Base.at @path }
 
+      should 'be root' do
+        assert subject.root?
+      end
+
+      should 'have not id' do
+        assert_nil subject.id
+      end
+
       should 'have not name' do
         assert_nil subject.name
       end
