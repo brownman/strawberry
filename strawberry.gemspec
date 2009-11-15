@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{strawberry}
-  s.version = "0.1.5"
+  s.version = "0.1.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov of Peppery"]
@@ -30,12 +30,14 @@ Gem::Specification.new do |s|
      "lib/strawberry/dao.rb",
      "lib/strawberry/node.rb",
      "lib/strawberry/tokyo.rb",
+     "lib/strawberry/uuid.rb",
      "strawberry.gemspec",
      "test/.gitignore",
      "test/base_test.rb",
      "test/dao_test.rb",
      "test/node_test.rb",
-     "test/test_helper.rb"
+     "test/test_helper.rb",
+     "test/uuid_test.rb"
   ]
   s.homepage = %q{http://github.com/peppery/strawberry}
   s.rdoc_options = ["--charset=UTF-8"]
