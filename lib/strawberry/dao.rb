@@ -2,7 +2,7 @@
 
 module Strawberry
   module DAO
-    VALID_NAME_PATTERN = /^[A-z_\-0-9\.]+$/
+    VALID_NAME_PATTERN = /^[A-z_\-0-9]+$/
 
     def valid_name?(name)
       # only A-Z a-z '_' '-'
@@ -13,7 +13,8 @@ module Strawberry
     class InvalidName < RuntimeError
       attr_reader :name
       def initialize name
-        super("invalid table name '#{name}' not matches #{VALID_NAME_PATTERN}")
+        super("invalid table name '#{name}' not matches " +
+            VALID_NAME_PATTERN)
         @name = name
       end
     end
