@@ -14,7 +14,7 @@ module Strawberry
       attr_reader :name
       def initialize name
         super("invalid table name '#{name}' not matches " +
-            VALID_NAME_PATTERN)
+            VALID_NAME_PATTERN.inspect)
         @name = name
       end
     end
@@ -71,83 +71,98 @@ module Strawberry
       end
     end
 
-    def table_exist? name
-      return true unless name
-      valid_name?(name) && index[name]
+    def have_table? id
+      return true unless id
+      valid_name?(id) && index[id]
     end
 
-    def add_table(name, parent_name = nil)
+    def have_named_table? name, parent_id = nil
+      return true unless name
+      return false unless valid_name?(name)
+
+      !!get_childs(parent_id).find do |c|
+        index[c]['name'] == name
+      end
+    end
+
+    def get_name(id)
+      return NotFound.new(id) unless have_table? id
+      index[id]['name']
+    end
+
+    def add_table(name = Strawberry.uuid, parent_id = nil)
       raise InvalidName.new(name) unless valid_name?(name)
-      raise AlreadyExists.new(name) if table_exist? name
-      if parent_name && !table_exist?(parent_name)
-        raise NotFound.new(parent_name)
+      raise AlreadyExists.new(name) if have_named_table? name
+      if parent_id && !have_table?(parent_id)
+        raise NotFound.new(parent_id)
       end
 
-      index[name] = { 'parent' => parent_name }
-      name
+      id = Strawberry.uuid
+      index[id] = { 'parent' => parent_id, 'name' => name }
+      id
     end
 
-    def get_data(name)
-      raise InvalidName.new(name) unless valid_name?(name)
-      raise NotFound.new(name) unless table_exist? name
+    def get_data(id)
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
 
-      array_wrap(Marshal.load(data[name])).freeze
+      array_wrap(Marshal.load(data[id])).freeze
     rescue TypeError
       [ [] ]
     end
 
-    def set_data(name, new_data)
-      raise InvalidName.new(name) unless valid_name?(name)
-      raise NotFound.new(name) unless table_exist? name
+    def set_data(id, new_data)
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
 
       new_data = array_wrap(new_data)
 
-      (data[name] = Marshal.dump(new_data)).freeze
+      (data[id] = Marshal.dump(new_data)).freeze
     end
 
-    def get_meta(name)
-      raise InvalidName.new(name) unless valid_name?(name)
-      raise NotFound.new(name) unless table_exist? name
+    def get_meta(id)
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
 
-      (meta[name] || {}).freeze
+      (meta[id] || {}).freeze
     end
 
-    def set_meta(name, new_meta)
-      raise InvalidName.new(name) unless valid_name?(name)
-      raise NotFound.new(name) unless table_exist? name
+    def set_meta(id, new_meta)
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
       raise TypeError unless new_meta.instance_of? Hash
 
-      (meta[name] = new_meta).freeze
+      (meta[id] = new_meta).freeze
     end
 
-    def get_parent name
-      return nil unless name
-      raise NotFound.new(name) unless table_exist? name
+    def get_parent id
+      return nil unless id
+      raise NotFound.new(id) unless have_table? id
 
-      index[name]['parent']
+      index[id]['parent']
     end
 
-    def get_childs name
-      raise NotFound.new(name) unless table_exist? name
+    def get_childs id
+      raise NotFound.new(id) unless have_table? id
 
       index.query do |q|
-        q.add_condition :parent, :eq, name
+        q.add_condition :parent, :eq, id
       end.map { |r| r[:pk] }
     end
 
-    def remove_table name
-      raise InvalidName.new(name) unless valid_name?(name)
-      raise NotFound.new(name) unless table_exist? name
+    def remove_table id
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
 
-      get_childs(name).each do |c|
-        remove_table c if table_exist? c
+      get_childs(id).each do |c|
+        remove_table c if have_table? c
       end
 
-      data.delete name
-      meta.delete name
-      index.delete name
+      data.delete id
+      meta.delete id
+      index.delete id
 
-      name
+      id
     end
 
     def array_wrap obj

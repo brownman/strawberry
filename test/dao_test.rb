@@ -31,17 +31,17 @@ module Strawberry::Test
         end
       end
 
-      should 'validate format of table name' do
-        [ nil, 'check!', '$asd', '+a', '', 'хуй-пизда' ].each do |name|
+      should 'validate format of table id' do
+        [ nil, 'check!', '$asd', '+a', '', 'хуй-пизда' ].each do |id|
           assert_raise Strawberry::DAO::InvalidName do
-            subject.add_table name
+            subject.add_table id
           end
         end
       end
 
       should 'add new table' do
         table = subject.add_table Strawberry.uuid
-        assert subject.table_exist?(table)
+        assert subject.have_table?(table)
       end
 
       should 'have no data and metadata on new table' do
@@ -139,7 +139,7 @@ module Strawberry::Test
       should 'add table child' do
         root = subject.add_table Strawberry.uuid
         child = subject.add_table Strawberry.uuid, root
-        assert subject.table_exist?(child)
+        assert subject.have_table?(child)
       end
 
       should 'not add child to not-existant parent table' do
@@ -147,6 +147,24 @@ module Strawberry::Test
         assert_raise Strawberry::DAO::NotFound do
           child = subject.add_table Strawberry.uuid, root
         end
+      end
+
+      should 'get table name' do
+        name = Strawberry.uuid
+        table = subject.add_table name
+        assert_equal name, subject.get_name(table)
+      end
+
+      should 'check named table existance' do
+        root_name = Strawberry.uuid
+        root = subject.add_table root_name
+        assert subject.have_named_table?(root_name)
+        assert !subject.have_named_table?(root_name + '123')
+
+        child_name = Strawberry.uuid
+        child = subject.add_table child_name, root
+        assert subject.have_named_table?(child_name, root)
+        assert !subject.have_named_table?(Strawberry.uuid, root)
       end
 
       should 'find parent of table' do
@@ -178,11 +196,11 @@ module Strawberry::Test
         end
       end
 
-      should 'validate uniqueness of table name' do
-        name = Strawberry.uuid
-        table = subject.add_table name
+      should 'validate uniqueness of table id' do
+        id = Strawberry.uuid
+        table = subject.add_table id
         assert_raise Strawberry::DAO::AlreadyExists do
-          subject.add_table name
+          subject.add_table id
         end
       end
 
@@ -196,13 +214,13 @@ module Strawberry::Test
         assert_nothing_raised { subject.remove_table root }
 
         [ child1, child1a, child1b, child2 ].each do |child|
-          assert !subject.table_exist?(child)
+          assert !subject.have_table?(child)
           assert_raise Strawberry::DAO::NotFound do
             subject.get_parent child
           end
         end
 
-        assert !subject.table_exist?(root)
+        assert !subject.have_table?(root)
       end
 
       should 'not remove not-existant table' do
