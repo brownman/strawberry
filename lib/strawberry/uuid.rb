@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-# conversions are took from O'Reilly's Ruby Cookbook
 class DateTime
+  # Convert current DateTime to Time in local timezone.
   def to_local_time
     to_time(new_offset(DateTime.now.offset - offset), :local)
   end
@@ -18,6 +18,11 @@ require 'digest/sha2'
 
 module Strawberry
   class << self
+    # Generate an Universally Unique Identifier (UUID) which
+    # heavily used in Strawberry internals.
+    #
+    # Optional parameter <tt>now</tt> specifies the Date+Time
+    # to generate UUID from.
     def uuid now = DateTime.now
       time_now = now.to_local_time
 
