@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module Strawberry
-  module DAO
+  class DAO
     VALID_NAME_PATTERN = /^[A-z_\-0-9]+$/
 
     def valid_name?(name)
@@ -36,46 +36,43 @@ module Strawberry
     end
 
     class << self
-      def at path
-        @buildings ||= {}
+      alias :instance :new
+      private :instance
 
+      def new path
         unless File.directory? path
           raise Errno::ENOENT, path
         end
 
-        unless @buildings.has_key? path
-          base = self
-
-          @buildings[path] = Class.new do
-            include base
-
-            attr_reader :index, :data, :meta, :path
-            private :index, :data, :meta
-
-            define_method :initialize do
-              @path = path
-
-              index_path = File.join @path, 'index.tct'
-              @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
-
-              data_path = File.join @path, 'database.tch'
-              @data = Tokyo::Cabinet.new(data_path, :mode => 'wcef')
-
-              meta_path = File.join @path, 'metabase.tct'
-              @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
-            end
-          end.new
-        end
-
-        @buildings[path]
+        @cache ||= {}
+        @cache[path] ||= instance(path)
       end
     end
 
+    attr_reader :index, :data, :meta, :path
+    private :index, :data, :meta
+
+    def initialize(path)
+      @path = path
+
+      index_path = File.join @path, 'index.tct'
+      @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
+
+      data_path = File.join @path, 'database.tch'
+      @data = Tokyo::Cabinet.new(data_path, :mode => 'wcef')
+
+      meta_path = File.join @path, 'metabase.tct'
+      @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
+    end
+
+    # Check the table existance with <tt>id</td>.
     def have_table? id
       return true unless id
       valid_name?(id) && index[id]
     end
 
+    # Check the table existance with <tt>name</td>,
+    # according to its <tt>parent_id</tt>.
     def have_named_table? name, parent_id = nil
       return true unless name
       return false unless valid_name?(name)
@@ -85,11 +82,14 @@ module Strawberry
       end
     end
 
+    # Returns the table name by its <tt>id</tt>.
     def get_name(id)
       return NotFound.new(id) unless have_table? id
       index[id]['name']
     end
 
+    # Adds a new table with specified <tt>name</tt> and
+    # <tt>parent_id</tt> and returns its UUID.
     def add_table(name = Strawberry.uuid, parent_id = nil)
       raise InvalidName.new(name) unless valid_name?(name)
       raise AlreadyExists.new(name) if have_named_table? name
@@ -102,6 +102,7 @@ module Strawberry
       id
     end
 
+    # Returns the data of table <tt>id</tt>.
     def get_data(id)
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
@@ -111,6 +112,7 @@ module Strawberry
       [ [] ]
     end
 
+    # Sets and returns the <tt>new_data</tt> of table <tt>id</tt>.
     def set_data(id, new_data)
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
@@ -120,6 +122,7 @@ module Strawberry
       (data[id] = Marshal.dump(new_data)).freeze
     end
 
+    # Returns the metadata of table <tt>id</tt>.
     def get_meta(id)
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
@@ -127,6 +130,7 @@ module Strawberry
       (meta[id] || {}).freeze
     end
 
+    # Sets and returns the <tt>new_meta</tt> of table <tt>id</tt>.
     def set_meta(id, new_meta)
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
@@ -135,6 +139,7 @@ module Strawberry
       (meta[id] = new_meta).freeze
     end
 
+    # Returns the parent id of table <tt>id</tt>.
     def get_parent id
       return nil unless id
       raise NotFound.new(id) unless have_table? id
@@ -142,6 +147,7 @@ module Strawberry
       index[id]['parent']
     end
 
+    # Returns the array of child's ids of table <tt>id</tt>.
     def get_childs id
       raise NotFound.new(id) unless have_table? id
 
@@ -150,6 +156,7 @@ module Strawberry
       end.map { |r| r[:pk] }
     end
 
+    # Drop table <tt>id</tt> and return it's <tt>id</tt>.
     def remove_table id
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
