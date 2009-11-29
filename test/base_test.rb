@@ -6,13 +6,13 @@ module Strawberry::Test
   class Base < Test::Unit::TestCase
     context 'Strawberry Base Node Factory' do
       should 'have working factory method' do
-        instance = Strawberry::Base.at Strawberry::Test::DATABASE_PATH
+        instance = Strawberry::Base.new Strawberry::Test::DATABASE_PATH
         assert_kind_of Strawberry::Base, instance
       end
 
       should 'not have working factory at non-existant directory' do
         assert_raise Errno::ENOENT do
-          Strawberry::Base.at Strawberry::Test::DATABASE_PATH +
+          Strawberry::Base.new Strawberry::Test::DATABASE_PATH +
             Strawberry.uuid
         end
       end
@@ -23,7 +23,7 @@ module Strawberry::Test
         @path = Strawberry::Test::DATABASE_PATH
       end
 
-      subject { @base ||= Strawberry::Base.at @path }
+      subject { @base ||= Strawberry::Base.new @path }
 
       should 'be root' do
         assert subject.root?

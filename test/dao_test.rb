@@ -6,13 +6,13 @@ module Strawberry::Test
   class DAO < Test::Unit::TestCase
     context 'Strawberry DAO Factory' do
       should 'have working factory method' do
-        instance = Strawberry::DAO.at Strawberry::Test::DATABASE_PATH
+        instance = Strawberry::DAO.new Strawberry::Test::DATABASE_PATH
         assert_kind_of Strawberry::DAO, instance
       end
 
       should 'not have working factory at non-existant directory' do
         assert_raise Errno::ENOENT do
-          Strawberry::DAO.at Strawberry::Test::DATABASE_PATH +
+          Strawberry::DAO.new Strawberry::Test::DATABASE_PATH +
             Strawberry.uuid
         end
       end
@@ -23,7 +23,7 @@ module Strawberry::Test
         @path = Strawberry::Test::DATABASE_PATH
       end
 
-      subject { @dao = Strawberry::DAO.at @path }
+      subject { @dao = Strawberry::DAO.new @path }
 
       should 'have allocated databases' do
         [ 'database.tch', 'index.tct', 'metabase.tct' ].each do |db|

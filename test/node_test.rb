@@ -9,8 +9,8 @@ module Strawberry::Test
         @path = Strawberry::Test::DATABASE_PATH
         # factories prevents of creating more than one DAO/Base/Node
         # instance for one entity (path or tree node)
-        @dao ||= Strawberry::DAO.at @path
-        @base ||= Strawberry::Base.at @path
+        @dao ||= Strawberry::DAO.new @path
+        @base ||= Strawberry::Base.new @path
       end
 
       should 'have working factory method' do
@@ -22,7 +22,7 @@ module Strawberry::Test
     context 'Strawberry Node' do
       setup do
         @path = Strawberry::Test::DATABASE_PATH
-        @base ||= Strawberry::Base.at @path
+        @base ||= Strawberry::Base.new @path
       end
 
       subject { @node ||= @base >> Strawberry.uuid }
