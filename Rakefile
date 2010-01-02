@@ -8,13 +8,13 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = 'strawberry'
     gem.summary = 'Tree-Oriented Table Data Storage.'
-    gem.description = 'Domain Specific Solution to store Table data into Tree hierarchy with Metadata.'
+    gem.description = 'Tree-Oriented Table Data Storage.'
     gem.email = 'eveel@peppery.me'
     gem.homepage = 'http://github.com/peppery/strawberry'
     gem.rubyforge_project = 'strawberry'
     gem.authors = [ 'Dmitry A. Ustalov of Peppery' ]
     gem.add_development_dependency "shoulda", ">= 0"
-    gem.add_dependency 'rufus-tokyo', '>= 1.0.3'
+    gem.add_dependency 'rufus-tokyo', '>= 1.0.4'
   end
   Jeweler::RubyforgeTasks.new
   Jeweler::GemcutterTasks.new
