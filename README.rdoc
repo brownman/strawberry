@@ -28,19 +28,19 @@
 Strawberry is an experimental data storage library developed by
 Dmitry A. Ustalov (aka eveel).
 
-General idea of Strawberry lies on manipulation of following things
-and concepts:
+The general idea of Strawberry lies on manipulating with the
+following things and concepts:
 
 * plain tables (two-dimensional matrices, alright).
 * those tables metadata, like RDBMS.
-* fresh and tasty: every table is a node of table tree.
+* fresh and tasty: every table is a node of a table tree.
 
 == Requirements
 
 * Ruby: MRI 1.8.x/1.9.1, latest REE.
 * `tokyocabinet` library installed.
-* installed `rufus-tokyo` gem (also `tokyocabinet` gem is highly recommended).
-* installed `uuid` gem.
+* `rufus-tokyo` gem installed (also `tokyocabinet` gem is highly recommended).
+* `uuid` gem installed.
 * for testing purposes, delicious `shoulda` gem.
 
 == Rails
@@ -69,15 +69,15 @@ Okay, Strawberry can easily store it:
                  [ '09:00', '09:15', '09:30' ],
                  [ '10:00', '10:15', '10:30' ] ]
 
-Right now, let's continue our imagination. Why do not describe this
-table? Really, why do not? We can do it easily. In Strawberry, every
-table has not only a data (matrix) field, but meta (hash) field too.
-Assume this time table is assigned to Person with id = 1.
+Let us continue imagining. Why not to describe this table? Really,
+why not? We can do it easily. In Strawberry, every table
+has not only a data (matrix) field, but a meta (hash) field too.
+Assume this timetable is assigned to Person with id = 1.
 
   times.meta = { 'person_id' => '1' }
 
-Cool, yeah? But we have another way to describe those relationship.
-Strawberry contains all tables in a tree-like structure, therefore we
+Cool, yeah? But we have another way to describe those relationships.
+Strawberry stores all tables in a tree-like structure, therefore we
 can easily group similar records into one common denominator.
 
   people = db >> 'people'
