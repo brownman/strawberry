@@ -1,0 +1,118 @@
+= Strawberry!
+
+  888888888888888888888888888888888888888888888888
+  888888888888888888888888888888888888888888888888
+  888888888888888888888888888C:O888888888888888888
+  8888888888888888888888888Ooc88888888888888888888
+  888888888888888888888888Cco888888888888888888888
+  88888888888888888888888Occ8888888888888888888888
+  88888888888888888OOOOOOC:C8OOOO88888888888888888
+  8888888888888OCCCCCoocoCoCc.:::oCCoCO88888888888
+  88888888888OooCc...:coc:oC:ccc:::::oCO8888888888
+  8888888888occcc:::cooooccccccccc::::cO8888888888
+  88888888Occcccc:ccCCoCCooooooocccc::::o888888888
+  8888888OcccccccoCCC88Cocccoooocccc:::::c88888888
+  8888888o:ccccccoCCCOCCcccccccooocc::::::o8888888
+  8888888c::::cc:coccocccc:cccccccc::::::.c8888888
+  8888888O::::::cc::::c:cc::::::::::::::..o8888888
+  88888888o....::::c:::::::::::::::......c88888888
+  888888888c.........:.:..::::...:......:O88888888
+  8888888888o..........................:O888888888
+  88888888888O.... ...................o88888888888
+  8888888888888C     . .... ........c8888888888888
+  888888888888888O.      .........o888888888888888
+  888888888888888888c      .....o88888888888888888
+  88888888888888888888o   ....C8888888888888888888
+  8888888888888888888888OocoO888888888888888888888
+
+Strawberry is an experimental data storage library developed by
+Dmitry A. Ustalov (aka eveel).
+
+General idea of Strawberry lies on manipulation of following things
+and concepts:
+
+* plain tables (two-dimensional matrices, alright).
+* those tables metadata, like RDBMS.
+* fresh and tasty: every table is a node of table tree.
+
+== Requirements
+
+* Ruby: MRI 1.8.x/1.9.1, latest REE.
+* `tokyocabinet` library installed.
+* installed `rufus-tokyo` gem (also `tokyocabinet` gem is highly recommended).
+* installed `uuid` gem.
+* for testing purposes, delicious `shoulda` gem.
+
+== Rails
+
+If you are looking for Rails integration plugin, just take our
+http://github.com/peppery/strawberails gem.
+
+== Explanation
+
+Just imagine: you have a table like this:
+
+   08:00 | 08:15 | 08:30
+  -------+-------+-------
+   09:00 | 09:15 | 09:30
+  -------+-------+-------
+   10:00 | 10:15 | 10:30
+
+Okay, Strawberry can easily store it:
+
+  require 'strawberry'
+
+  db = Strawberry::Base.new 'db-path'
+  times = db >> 'times'
+
+  times.data = [ [ '08:00', '08:15', '08:30' ],
+                 [ '09:00', '09:15', '09:30' ],
+                 [ '10:00', '10:15', '10:30' ] ]
+
+Right now, let's continue our imagination. Why do not describe this
+table? Really, why do not? We can do it easily. In Strawberry, every
+table has not only a data (matrix) field, but meta (hash) field too.
+Assume this time table is assigned to Person with id = 1.
+
+  times.meta = { 'person_id' => '1' }
+
+Cool, yeah? But we have another way to describe those relationship.
+Strawberry contains all tables in a tree-like structure, therefore we
+can easily group similar records into one common denominator.
+
+  people = db >> 'people'
+
+  person1 = people >> '1'
+  person1.data = [ ... ]
+  person1.meta = { ... }
+
+When it's necessary, we may iterate over the items tree:
+
+  people.childs.each do |person|
+    p [ person.name, person.data, person.meta ]
+    # [ '1', [ ... ], { ... } ]
+  end
+
+This functionality is enough to solve some data storage problems. Enjoy!
+
+= Documentation
+
+Reference documentation is found in the documentation of the Strawberry::Node
+class.
+
+= To-Do List
+
+* complete RDoc.
+* improve performance.
+* metadata selection routines (RDBMS-like queries will be nice).
+
+= Credits
+
+Original idea and development by Dmitry A. Ustalov (aka eveel)
+of Peppery:
+
+* http://www.eveel.ru
+* http://www.peppery.me
+* http://github.com/peppery
+
+Strawberry is released under MIT License.
