@@ -120,8 +120,6 @@ module Strawberry
 
       # enjoy
       array_wrap(read).freeze
-    rescue TypeError
-      [ [] ]
     end
 
     # Sets and returns the <tt>new_data</tt> of table <tt>id</tt>.
@@ -139,7 +137,7 @@ module Strawberry
       # set the table identifier back
       index_hash = {
         'num' => new_data.size,
-        'len' => new_data.inject(0) { |r, e| r < e.size ? e.size : r }
+        'len' => new_data.max.size
       }
 
       # put data entity
