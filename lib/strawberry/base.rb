@@ -16,5 +16,9 @@ module Strawberry
     def initialize(path)
       super(nil, self, DAO.new(path))
     end
+
+    def inspect
+      "#<#{self.class} @path=#{self.dao.path.inspect}>"
+    end
   end
 end

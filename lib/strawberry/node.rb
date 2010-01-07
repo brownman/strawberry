@@ -3,7 +3,7 @@
 module Strawberry
   class Node
     attr_reader :id, :base, :dao
-    private :base, :dao
+    protected :base, :dao
 
     class << self
       alias :uncached_new :new
@@ -21,6 +21,10 @@ module Strawberry
 
     def initialize(id, base, dao)
       @id, @base, @dao = id, base, dao
+    end
+
+    def inspect
+      "#<#{self.class}:#{self.id} @name=#{self.name.inspect} @childs=#{self.childs.size}>"
     end
 
     # Is this Node root?
