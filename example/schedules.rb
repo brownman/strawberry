@@ -7,32 +7,24 @@ require 'fileutils'
 require 'strawberry'
 require 'pp'
 
-FileUtils.rm_rf 'db' if File.directory? 'db'
-FileUtils.mkdir_p 'db'
-
-LESSONS = [ 'math', 'lang', 'comp', 'piv4ik' ]
-
-def run node, level = 0
-  print "\t" * level
-  puts node.name ? node.name : 'root'
-  node.childs.each { |c| run(c, level + 1) }
+if File.directory? 'db'
+  FileUtils.rm_rf 'db'
 end
+FileUtils.mkdir_p 'db'
 
 def show table
   unless table.meta.empty?
-    print "\t"
-    puts 'Metadata:'
     table.meta.each { |k, v| puts "#{k} = #{v}" }
     puts
   end
   unless table.data.empty?
-    print "\t"
-    puts 'Contents:'
     pp table.data
   end
 end
 
-root = Strawberry::Base.at 'db'
+LESSONS = [ 'math', 'lang', 'comp', 'piv4ik' ]
+
+root = Strawberry::Base.new 'db'
 
 school = root >> 'school'
 timeline = school >> 'timelines'
@@ -67,21 +59,17 @@ schedule2.data = (1..6).map do
   end
 end
 
-puts 'Strawberry Database Hierarchy'
-run root
-puts
-puts
-puts 'Strawberry Table: School Timeline'
+puts '= Table: School Timeline'
 show timeline
 puts
-puts 'Strawberry Table: Class 1'
+puts '= Table: Class 1'
 show class1
 puts
-puts 'Strawberry Table: Class 1 Schedule'
+puts '== Table: Class 1 Schedule'
 show schedule1
 puts
-puts 'Strawberry Table: Class 2'
+puts '= Table: Class 2'
 show class2
 puts
-puts 'Strawberry Table: Class 2 Schedule'
+puts '== Table: Class 2 Schedule'
 show schedule2
