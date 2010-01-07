@@ -58,8 +58,8 @@ module Strawberry
       index_path = File.join @path, 'index.tct'
       @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
 
-      data_path = File.join @path, 'database.tch'
-      @data = Tokyo::Cabinet.new(data_path, :mode => 'wcef')
+      data_path = File.join @path, 'database.tct'
+      @data = Tokyo::Table.new(data_path, :mode => 'wcefs')
 
       meta_path = File.join @path, 'metabase.tct'
       @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
@@ -107,7 +107,19 @@ module Strawberry
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      array_wrap(Marshal.load(data[id])).freeze
+      # resolve number of elements and common array length
+      index_hash = index[id]
+      num = (index_hash['num'] || '0').to_i
+      len = (index_hash['len'] || '0').to_i
+
+      # read table from the data storage
+      read = (0...num).map do |i|
+        uuid = index_hash[i.to_s]
+        data[uuid]
+      end.map { |h| (0...len).map { |i| h[i.to_s] || '' } }
+
+      # enjoy
+      array_wrap(read).freeze
     rescue TypeError
       [ [] ]
     end
@@ -119,7 +131,32 @@ module Strawberry
 
       new_data = array_wrap(new_data)
 
-      (data[id] = Marshal.dump(new_data)).freeze
+      # little cleanup
+      index_hash = index[id]
+      num = index_hash['num'].to_i
+      num.times { |i| data.delete(index_hash[i]) }
+
+      # set the table identifier back
+      index_hash = {
+        'num' => new_data.size,
+        'len' => new_data.inject(0) { |r, e| r < e.size ? e.size : r }
+      }
+
+      # put data entity
+      new_data.each_with_index do |sub, i|
+        uuid = Strawberry::uuid
+        data_hash = {}
+        sub.each_with_index do |e, j|
+          data_hash[j] = (e || '').to_s
+        end
+        data[uuid] = data_hash
+        index_hash[i] = uuid
+      end
+
+      # update strawberry index
+      index[id] = index_hash
+
+      new_data.freeze
     end
 
     # Returns the metadata of table <tt>id</tt>.

@@ -26,7 +26,7 @@ module Strawberry::Test
       subject { @dao = Strawberry::DAO.new @path }
 
       should 'have allocated databases' do
-        [ 'database.tch', 'index.tct', 'metabase.tct' ].each do |db|
+        [ 'database.tct', 'index.tct', 'metabase.tct' ].each do |db|
           assert_file_exist File.join(Strawberry::Test::DATABASE_PATH, db)
         end
       end
@@ -92,10 +92,13 @@ module Strawberry::Test
         table = subject.add_table Strawberry.uuid
 
         ints = (1..100).map { |a| Array(1..a) }
-        strs = ints.map { |a| a.map { |i| i.to_s } }
-
         subject.set_data table, ints
-        assert_equal strs, subject.get_data(table)
+
+        ints.map! do |a|
+          a << '' while a.size < 100
+          a.map! { |i| i.to_s }
+        end
+        assert_equal ints, subject.get_data(table)
       end
 
       should 'froze data' do
