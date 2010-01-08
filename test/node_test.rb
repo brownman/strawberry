@@ -88,8 +88,15 @@ module Strawberry::Test
         child1 = subject >> Strawberry.uuid
         child1 >> Strawberry.uuid
         child2 = subject >> Strawberry.uuid
+        assert !subject.childs.empty?
         assert_nothing_raised { subject.clean! }
         assert subject.childs.empty?
+      end
+
+      should 'drop' do
+        assert !subject.removed?
+        subject.drop!
+        assert subject.removed?
       end
 
       should 'not have data or metadata on not-exitant tree node' do
