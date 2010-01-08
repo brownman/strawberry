@@ -58,6 +58,13 @@ module Strawberry::Test
           subject.meta
         end
       end
+
+      should 'be a common parent' do
+        child = subject >> Strawberry.uuid
+        assert subject.root?
+        assert_equal subject, child.parent
+        assert_contains subject.childs, child
+      end
     end
   end
 end

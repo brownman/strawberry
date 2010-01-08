@@ -84,7 +84,8 @@ module Strawberry
 
     # Returns the table name by its <tt>id</tt>.
     def get_name(id)
-      return NotFound.new(id) unless have_table? id
+      raise InvalidName.new(id) unless valid_name?(id)
+      raise NotFound.new(id) unless have_table? id
       index[id]['name']
     end
 
@@ -176,10 +177,11 @@ module Strawberry
 
     # Returns the parent id of table <tt>id</tt>.
     def get_parent id
-      return nil unless id
+      raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      index[id]['parent']
+      parent_id = index[id]['parent']
+      parent_id.empty? ? nil : parent_id
     end
 
     # Returns the array of child's ids of table <tt>id</tt>.

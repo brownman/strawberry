@@ -34,14 +34,16 @@ module Strawberry
 
     # Nome of this Node.
     def name
-      return nil if root?
+      return nil if self.root?
       dao.get_name(self.id)
     end
 
     # Parent of this Node.
     def parent
       return nil if root?
-      Strawberry::Node.new dao.get_parent(self.id), base, dao
+      parent = dao.get_parent(self.id)
+      return base unless parent
+      Strawberry::Node.new parent, base, dao
     end
 
     # Childs of this Node.
