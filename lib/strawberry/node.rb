@@ -92,8 +92,15 @@ module Strawberry
     def clean!
       dao.get_childs(self.id).each do |child_id|
         dao.remove_table child_id
-      end.freeze
+      end
       self
+    end
+
+    # Remove this Node.
+    def drop!
+      self.clean!
+      dao.remove_table self.id
+      nil
     end
 
     # Is this Node removed?
