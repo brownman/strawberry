@@ -127,13 +127,7 @@ module Strawberry
       raise NotFound.new(id) unless have_table? id
 
       saved = array_wrap(new_data)
-
-      data_indeces = data[id] || {}
-
-      # little cleanup
-      data_indeces.each_value do |uuid|
-        data.delete(uuid)
-      end
+      remove_data id
 
       data_indeces = {}
 
@@ -188,6 +182,18 @@ module Strawberry
       end.map { |r| r[:pk] }
     end
 
+    def remove_data id
+      data_indeces = data[id] || {}
+
+      # little cleanup
+      data_indeces.each_value do |uuid|
+        data.delete(uuid)
+      end
+
+      data.delete id
+      data_indeces
+    end
+
     # Drop table <tt>id</tt> and return it's <tt>id</tt>.
     def remove_table id
       raise InvalidName.new(id) unless valid_name?(id)
@@ -197,7 +203,7 @@ module Strawberry
         remove_table c if have_table? c
       end
 
-      data.delete id
+      remove_data id
       meta.delete id
       index.delete id
 
