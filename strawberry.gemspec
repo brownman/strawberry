@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{strawberry}
-  s.version = "0.3.2"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov of Peppery"]
-  s.date = %q{2010-01-09}
+  s.date = %q{2010-01-10}
   s.description = %q{Tree-Oriented Table Data Storage.}
   s.email = %q{eveel@peppery.me}
   s.extra_rdoc_files = [
@@ -23,8 +23,9 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "example/.gitignore",
-     "example/schedules.rb",
+     "examples/.gitignore",
+     "examples/roll.rb",
+     "examples/schedules.rb",
      "lib/strawberry.rb",
      "lib/strawberry/base.rb",
      "lib/strawberry/dao.rb",
@@ -50,7 +51,9 @@ Gem::Specification.new do |s|
      "test/dao_test.rb",
      "test/node_test.rb",
      "test/uuid_test.rb",
-     "test/base_test.rb"
+     "test/base_test.rb",
+     "examples/schedules.rb",
+     "examples/roll.rb"
   ]
 
   if s.respond_to? :specification_version then
