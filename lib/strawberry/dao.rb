@@ -181,7 +181,7 @@ module Strawberry
       raise NotFound.new(id) unless have_table? id
 
       parent_id = index[id]['parent']
-      parent_id.empty? ? nil : parent_id
+      parent_id && parent_id.empty? ? nil : parent_id
     end
 
     # Returns the array of child's ids of table <tt>id</tt>.
