@@ -108,16 +108,14 @@ module Strawberry
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      # resolve number of elements and common array length
-      index_hash = index[id]
-      num = (index_hash['num'] || '0').to_i
-      len = (index_hash['len'] || '0').to_i
+      data_indeces = data[id] || {}
 
-      # read table from the data storage
-      read = (0...num).map do |i|
-        uuid = index_hash[i.to_s]
-        data[uuid]
-      end.map { |h| (0...len).map { |i| h[i.to_s] || '' } }
+      read = Array(0...data_indeces.size).map do |i|
+        data_hash = data[data_indeces[i.to_s]]
+        Array(0...data_hash.size).map do |j|
+          data_hash[j.to_s] || ''
+        end
+      end
 
       # enjoy
       array_wrap(read).freeze
@@ -128,34 +126,31 @@ module Strawberry
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      new_data = array_wrap(new_data)
+      saved = array_wrap(new_data)
+
+      data_indeces = data[id] || {}
 
       # little cleanup
-      index_hash = index[id]
-      num = index_hash['num'].to_i
-      num.times { |i| data.delete(index_hash[i]) }
-
-      # set the table identifier back
-      index_hash = {
-        'num' => new_data.size,
-        'len' => new_data.max.size
-      }
-
-      # put data entity
-      new_data.each_with_index do |sub, i|
-        uuid = Strawberry::uuid
-        data_hash = {}
-        sub.each_with_index do |e, j|
-          data_hash[j] = (e || '').to_s
-        end
-        data[uuid] = data_hash
-        index_hash[i] = uuid
+      data_indeces.each_value do |uuid|
+        data.delete(uuid)
       end
 
-      # update strawberry index
-      index[id] = index_hash
+      data_indeces = {}
 
-      new_data.freeze
+      # put data entity
+      saved.each_with_index do |array, i|
+        uuid = Strawberry.uuid
+        data_hash = {}
+        array.each_with_index do |e, j|
+          data_hash[j.to_s] = (e || '').to_s
+        end
+        data[uuid] = data_hash
+        data_indeces[i.to_s] = uuid
+      end
+
+      data[id] = data_indeces
+
+      saved.freeze
     end
 
     # Returns the metadata of table <tt>id</tt>.

@@ -91,14 +91,12 @@ module Strawberry::Test
       should 'correctly store some non-flat 2D data' do
         table = subject.add_table Strawberry.uuid
 
-        ints = (1..100).map { |a| Array(1..a) }
-        subject.set_data table, ints
-
-        ints.map! do |a|
-          a << '' while a.size < 100
-          a.map! { |i| i.to_s }
+        vals = (1..100).map do |a|
+          Array(1..a).map { |i| i.to_s }
         end
-        assert_equal ints, subject.get_data(table)
+        subject.set_data table, vals
+
+        assert_equal vals, subject.get_data(table)
       end
 
       should 'froze data' do
@@ -143,6 +141,15 @@ module Strawberry::Test
         root = subject.add_table Strawberry.uuid
         child = subject.add_table Strawberry.uuid, root
         assert subject.have_table?(child)
+      end
+
+      should 'work fine with child table data' do
+        root = subject.add_table Strawberry.uuid
+        child = subject.add_table Strawberry.uuid, root
+        origin = [ [ '1', '2', '3' ], [ '4', '5', '6' ] ]
+        subject.set_data(child, origin)
+        assert_equal origin, subject.get_data(child)
+        assert_equal root, subject.get_parent(child)
       end
 
       should 'not add child to not-existant parent table' do
