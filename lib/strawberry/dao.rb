@@ -58,8 +58,12 @@ module Strawberry
       index_path = File.join @path, 'index.tct'
       @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
 
-      data_path = File.join @path, 'database.tct'
-      @data = Tokyo::Table.new(data_path, :mode => 'wcefs')
+      data_path = File.join @path, 'database.tcb'
+      @data = Tokyo::Cabinet.new(data_path, :mode => 'wcefs')
+
+      def @data.key? k
+        !!self[k]
+      end
 
       meta_path = File.join @path, 'metabase.tct'
       @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
@@ -108,13 +112,13 @@ module Strawberry
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      data_indeces = data[id] || {}
-
-      read = Array(0...data_indeces.size).map do |i|
-        data_hash = data[data_indeces[i.to_s]]
-        Array(0...data_hash.size).map do |j|
-          data_hash[j.to_s] || ''
+      read = if data.key? id
+        head = data.getdup id
+        head.map do |uuid|
+          data.getdup uuid
         end
+      else
+        []
       end
 
       # enjoy
@@ -127,22 +131,16 @@ module Strawberry
       raise NotFound.new(id) unless have_table? id
 
       saved = array_wrap(new_data)
-      remove_data id
 
-      data_indeces = {}
+      #data.transaction do
+        remove_data id
 
-      # put data entity
-      saved.each_with_index do |array, i|
-        uuid = Strawberry.uuid
-        data_hash = {}
-        array.each_with_index do |e, j|
-          data_hash[j.to_s] = (e || '').to_s
+        for array in saved
+          uuid = Strawberry.uuid
+          array.each { |e| data.putdup(uuid, e) }
+          data.putdup(id, uuid)
         end
-        data[uuid] = data_hash
-        data_indeces[i.to_s] = uuid
-      end
-
-      data[id] = data_indeces
+      #end
 
       saved.freeze
     end
@@ -183,16 +181,17 @@ module Strawberry
     end
 
     def remove_data id
-      data_indeces = data[id] || {}
-
-      # little cleanup
-      data_indeces.each_value do |uuid|
-        data.delete(uuid)
+      while data.key? id
+        content = data.getdup id
+        for uuid in content
+          data.ldelete uuid while data.key? uuid
+        end
+        data.ldelete id
       end
 
-      data.delete id
-      data_indeces
+      nil
     end
+    private :remove_data
 
     # Drop table <tt>id</tt> and return it's <tt>id</tt>.
     def remove_table id
