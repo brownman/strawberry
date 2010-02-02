@@ -14,7 +14,7 @@ begin
     gem.rubyforge_project = 'strawberry'
     gem.authors = [ 'Dmitry A. Ustalov of Peppery' ]
     gem.add_development_dependency "shoulda", ">= 2.10.2"
-    gem.add_dependency 'rufus-tokyo', '>= 1.0.5'
+    gem.add_dependency 'rufus-tokyo', '>= 1.0.6'
     gem.add_dependency 'uuid', '>= 2.1.1'
   end
   Jeweler::RubyforgeTasks.new
