@@ -99,7 +99,7 @@ module Strawberry::Test
         assert subject.removed?
       end
 
-      should 'not have data or metadata on not-exitant tree node' do
+      should 'not have data or metadata on not-existant tree node' do
         child = subject >> Strawberry.uuid
         subject.clean!
         assert_raise Strawberry::DAO::NotFound do
