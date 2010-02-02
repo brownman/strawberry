@@ -49,6 +49,8 @@ module Strawberry
       end
     end
 
+    #attr_reader :index, :data, :meta, :path
+    #private :index, :data, :meta
     attr_reader :index, :data, :meta, :path
     private :index, :data, :meta
 
@@ -56,17 +58,13 @@ module Strawberry
       @path = path
 
       index_path = File.join @path, 'index.tct'
-      @index = Tokyo::Table.new(index_path, :mode => 'wcefs')
+      @index = Tokyo::Table.new(index_path)
 
       data_path = File.join @path, 'database.tcb'
-      @data = Tokyo::Cabinet.new(data_path, :mode => 'wcefs')
-
-      def @data.key? k
-        !!self[k]
-      end
+      @data = Tokyo::Cabinet.new(data_path)
 
       meta_path = File.join @path, 'metabase.tct'
-      @meta = Tokyo::Table.new(meta_path, :mode => 'wcefs')
+      @meta = Tokyo::Table.new(meta_path)
     end
 
     # Check the table existance with <tt>id</td>.
@@ -112,14 +110,7 @@ module Strawberry
       raise InvalidName.new(id) unless valid_name?(id)
       raise NotFound.new(id) unless have_table? id
 
-      read = if data.key? id
-        head = data.getdup id
-        head.map do |uuid|
-          data.getdup uuid
-        end
-      else
-        []
-      end
+      read = data[id].map { |uuid| data[uuid] }
 
       # enjoy
       array_wrap(read).freeze
@@ -132,15 +123,14 @@ module Strawberry
 
       saved = array_wrap(new_data)
 
-      #data.transaction do
-        remove_data id
+      remove_data id
 
-        for array in saved
-          uuid = Strawberry.uuid
-          array.each { |e| data.putdup(uuid, e) }
-          data.putdup(id, uuid)
-        end
-      #end
+      # TODO: transactions will be nice
+      data[id] = saved.map do |array|
+        uuid = Strawberry.uuid
+        data[uuid] = array
+        uuid
+      end
 
       saved.freeze
     end
@@ -181,14 +171,8 @@ module Strawberry
     end
 
     def remove_data id
-      while data.key? id
-        content = data.getdup id
-        for uuid in content
-          data.ldelete uuid while data.key? uuid
-        end
-        data.ldelete id
-      end
-
+      data[id].each { |uuid| data.delete uuid }
+      data.delete id
       nil
     end
     private :remove_data
