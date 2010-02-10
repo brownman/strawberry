@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov of Peppery"]
-  s.date = %q{2010-02-02}
+  s.date = %q{2010-02-10}
   s.description = %q{Tree-Oriented Table Data Storage.}
   s.email = %q{eveel@peppery.me}
   s.extra_rdoc_files = [
@@ -62,16 +62,16 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<shoulda>, [">= 2.10.2"])
-      s.add_runtime_dependency(%q<rufus-tokyo>, [">= 1.0.6"])
+      s.add_runtime_dependency(%q<rufus-tokyo>, [">= 1.0.7"])
       s.add_runtime_dependency(%q<uuid>, [">= 2.1.1"])
     else
       s.add_dependency(%q<shoulda>, [">= 2.10.2"])
-      s.add_dependency(%q<rufus-tokyo>, [">= 1.0.6"])
+      s.add_dependency(%q<rufus-tokyo>, [">= 1.0.7"])
       s.add_dependency(%q<uuid>, [">= 2.1.1"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 2.10.2"])
-    s.add_dependency(%q<rufus-tokyo>, [">= 1.0.6"])
+    s.add_dependency(%q<rufus-tokyo>, [">= 1.0.7"])
     s.add_dependency(%q<uuid>, [">= 2.1.1"])
   end
 end
