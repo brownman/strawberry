@@ -1,9 +1,14 @@
 # encoding: utf-8
 
+begin
+  require 'oklahoma_mixer'
+rescue LoadError
+  require 'rubygems'
+  require 'oklahoma_mixer'
+end
+
 module Strawberry
   class DAO
-    require 'oklahoma_mixer'
-
     VALID_NAME_PATTERN = /^[A-z_\-0-9]+$/
 
     def valid_name?(name)
