@@ -25,6 +25,10 @@ module Strawberry::Test
 
       subject { @dao = Strawberry::DAO.new @path }
 
+      should 'have public databases path' do
+        assert_equal Strawberry::Test::DATABASE_PATH, subject.path
+      end
+
       should 'have allocated databases' do
         [ 'database.tcb', 'index.tct', 'metabase.tct' ].each do |db|
           assert_file_exist File.join(Strawberry::Test::DATABASE_PATH, db)

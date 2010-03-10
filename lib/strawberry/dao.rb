@@ -51,10 +51,11 @@ module Strawberry
       end
     end
 
-    attr_reader :index_path, :data_path, :meta_path
+    attr_reader :path, :index_path, :data_path, :meta_path
     private :index_path, :data_path, :meta_path
 
     def initialize(path)
+      @path = path
       @index_path = File.join path, 'index.tct'
       @data_path  = File.join path, 'database.tcb'
       @meta_path  = File.join path, 'metabase.tct'
