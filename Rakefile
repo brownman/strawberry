@@ -8,16 +8,15 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = 'strawberry'
     gem.summary = 'Tree-Oriented Table Data Storage.'
-    gem.description = 'Tree-Oriented Table Data Storage.'
-    gem.email = 'eveel@peppery.me'
+    gem.description = 'Tree-Oriented Table Data Storage based on TokyoCabinet.'
+    gem.email = 'eveeel@gmail.com'
     gem.homepage = 'http://github.com/peppery/strawberry'
     gem.rubyforge_project = 'strawberry'
-    gem.authors = [ 'Dmitry A. Ustalov of Peppery' ]
+    gem.authors = [ 'Dmitry A. Ustalov' ]
     gem.add_development_dependency "shoulda", ">= 2.10.2"
-    gem.add_dependency 'rufus-tokyo', '>= 1.0.7'
+    gem.add_dependency 'oklahoma_mixer', '>= 0.4.0'
     gem.add_dependency 'uuid', '>= 2.1.1'
   end
-  Jeweler::RubyforgeTasks.new
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts 'Jeweler (or a dependency) not available.'
