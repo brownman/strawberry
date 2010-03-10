@@ -196,7 +196,7 @@ module Strawberry::Test
         childs = (1..3).map do
           subject.add_table Strawberry.uuid, root
         end
-        assert_equal childs, subject.get_childs(root)
+        assert_same_elements childs, subject.get_childs(root)
       end
 
       should 'not find childs of not-existant table' do
