@@ -4,7 +4,7 @@
 # easy solution to store hierarchical 2D-tables with
 # metadata.
 module Strawberry
-  require 'strawberry/tokyo'
+  #require 'strawberry/tokyo'
   require 'strawberry/uuid'
   require 'strawberry/base'
   require 'strawberry/dao'
