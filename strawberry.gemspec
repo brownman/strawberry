@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{strawberry}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov"]
-  s.date = %q{2010-03-11}
+  s.date = %q{2010-03-15}
   s.description = %q{Tree-Oriented Table Data Storage based on TokyoCabinet.}
   s.email = %q{eveeel@gmail.com}
   s.extra_rdoc_files = [
