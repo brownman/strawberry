@@ -9,8 +9,6 @@ rescue LoadError
   require 'shoulda'
 end
 
-STRAWBERRY_DEBUG = true
-
 $: << 'lib'
 
 module Test::Unit::Assertions
