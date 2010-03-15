@@ -228,9 +228,6 @@ module Strawberry
       db = OKMixer.open(path)
       begin
         yield db
-      rescue => ex
-        raise ex if defined? STRAWBERRY_DEBUG
-        nil
       ensure
         db.close
       end
