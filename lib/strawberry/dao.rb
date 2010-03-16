@@ -4,7 +4,7 @@ begin
   require 'oklahoma_mixer'
 rescue LoadError
   require 'rubygems'
-  require 'oklahoma_mixer'
+  retry
 end
 
 module Strawberry
