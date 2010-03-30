@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dmitry A. Ustalov"]
-  s.date = %q{2010-03-15}
+  s.date = %q{2010-03-30}
   s.description = %q{Tree-Oriented Table Data Storage based on TokyoCabinet.}
   s.email = %q{eveeel@gmail.com}
   s.extra_rdoc_files = [

@@ -37,9 +37,9 @@ following things and concepts:
 
 == Requirements
 
-* Ruby: MRI 1.8.x/1.9.1, latest REE.
+* Ruby: MRI 1.8.x/1.9.1 or latest REE.
 * `tokyocabinet` library installed.
-* `rufus-tokyo` gem installed (also `tokyocabinet` gem is highly recommended).
+* `oklahoma_mixer` gem installed.
 * `uuid` gem installed.
 * for testing purposes, delicious `shoulda` gem.
 
@@ -103,7 +103,6 @@ class.
 = To-Do List
 
 * complete RDoc.
-* improve performance.
 * metadata selection routines (RDBMS-like queries will be nice).
 
 = Credits
